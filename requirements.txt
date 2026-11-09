@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+pydantic
+openai
+pymupdf
+python-multipart
+python-dotenv
