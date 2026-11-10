@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { UploadCloud, Building2, Users, FileSignature, AlertTriangle, Loader2 } from "lucide-react";
+import { UploadCloud, Building2, Users, FileSignature, AlertTriangle, Loader2, UserCheck } from "lucide-react";
 
 export default function DashboardIDP() {
   const [file, setFile] = useState<File | null>(null);
@@ -121,15 +121,16 @@ export default function DashboardIDP() {
                     <Building2 className="w-5 h-5" />
                     <h3 className="font-semibold text-lg">Dados da Empresa</h3>
                   </div>
-                  <div className="p-6 grid grid-cols-2 gap-y-4 gap-x-6">
-                    <div><p className="text-xs text-neutral-500 uppercase font-semibold">Razão Social</p><p className="font-medium">{dados.razao_social}</p></div>
+                  <div className="p-6 grid grid-cols-2 lg:grid-cols-3 gap-y-4 gap-x-6">
+                    <div className="col-span-2 lg:col-span-3"><p className="text-xs text-neutral-500 uppercase font-semibold">Razão Social</p><p className="font-medium">{dados.razao_social}</p></div>
                     <div><p className="text-xs text-neutral-500 uppercase font-semibold">CNPJ</p><p className="font-medium">{dados.cnpj}</p></div>
-                    <div><p className="text-xs text-neutral-500 uppercase font-semibold">NIRE</p><p className="font-medium">{dados.numero_registro_junta}</p></div>
-                    <div><p className="text-xs text-neutral-500 uppercase font-semibold">Capital Social</p><p className="font-medium">R$ {dados.valor_capital_social?.toLocaleString('pt-BR')}</p></div>
+                    <div><p className="text-xs text-neutral-500 uppercase font-semibold">Reg. Junta (Não é NIRE)</p><p className="font-medium">{dados.numero_registro_junta}</p></div>
+                    <div><p className="text-xs text-neutral-500 uppercase font-semibold">Data Registro</p><p className="font-medium">{dados.data_registro || '-'}</p></div>
+                    <div className="col-span-2 lg:col-span-3"><p className="text-xs text-neutral-500 uppercase font-semibold">Capital Social</p><p className="font-medium">R$ {dados.valor_capital_social?.toLocaleString('pt-BR')}</p></div>
                   </div>
                 </div>
 
-                {/* Card 2: Quadro Societário */}
+                {/* Card 2: Quadro Societário (Sócios) */}
                 <div className="bg-white rounded-xl shadow-sm border border-neutral-200 overflow-hidden">
                   <div className="bg-neutral-800 px-6 py-4 flex items-center gap-2 text-white">
                     <Users className="w-5 h-5" />
@@ -142,7 +143,6 @@ export default function DashboardIDP() {
                           <th className="px-6 py-3 font-semibold">Nome</th>
                           <th className="px-6 py-3 font-semibold">CPF/CNPJ</th>
                           <th className="px-6 py-3 font-semibold">% Cotas</th>
-                          <th className="px-6 py-3 font-semibold">É Administrador?</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-neutral-100">
@@ -151,9 +151,38 @@ export default function DashboardIDP() {
                             <td className="px-6 py-4 font-medium">{socio.nome}</td>
                             <td className="px-6 py-4 text-neutral-600">{socio.cpf_cnpj}</td>
                             <td className="px-6 py-4">{socio.porcentagem_participacao}%</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* NOVO Card 3: Administradores e Diretores */}
+                <div className="bg-white rounded-xl shadow-sm border border-neutral-200 overflow-hidden">
+                  <div className="bg-neutral-800 px-6 py-4 flex items-center gap-2 text-white">
+                    <UserCheck className="w-5 h-5" />
+                    <h3 className="font-semibold text-lg">Administradores | Diretores</h3>
+                  </div>
+                  <div className="p-0 overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="bg-neutral-50 border-b border-neutral-200 text-xs uppercase text-neutral-500">
+                          <th className="px-6 py-3 font-semibold">Nome</th>
+                          <th className="px-6 py-3 font-semibold">CPF</th>
+                          <th className="px-6 py-3 font-semibold">Mandato</th>
+                          <th className="px-6 py-3 font-semibold">É Sócio?</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-neutral-100">
+                        {dados.administradores?.map((admin: any, idx: number) => (
+                          <tr key={idx} className="hover:bg-neutral-50">
+                            <td className="px-6 py-4 font-medium">{admin.nome}</td>
+                            <td className="px-6 py-4 text-neutral-600">{admin.cpf}</td>
+                            <td className="px-6 py-4 text-neutral-600">{admin.prazo_mandato}</td>
                             <td className="px-6 py-4">
-                              <span className={`px-2 py-1 rounded-full text-xs font-semibold ${socio.e_diretor_administrador ? 'bg-green-100 text-green-700' : 'bg-neutral-200 text-neutral-700'}`}>
-                                {socio.e_diretor_administrador ? 'Sim' : 'Não'}
+                              <span translate="no" className={`px-2 py-1 rounded-full text-xs font-semibold ${admin.e_socio ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
+                                {admin.e_socio ? 'SIM' : 'NÃO'}
                               </span>
                             </td>
                           </tr>
@@ -163,7 +192,7 @@ export default function DashboardIDP() {
                   </div>
                 </div>
 
-                {/* Card 3: Governança */}
+                {/* Card 4: Governança e Procurações */}
                 <div className="bg-white rounded-xl shadow-sm border border-neutral-200 overflow-hidden">
                   <div className="bg-neutral-800 px-6 py-4 flex items-center gap-2 text-white">
                     <FileSignature className="w-5 h-5" />
@@ -176,12 +205,14 @@ export default function DashboardIDP() {
                     </div>
                     <div>
                       <p className="text-xs text-neutral-500 uppercase font-semibold">Permite Procuração?</p>
-                      <p className="font-medium">{dados.permite_outorga_procuracao ? 'Sim' : 'Não'}</p>
+                      <p translate="no" className="font-medium text-lg">
+                        {dados.permite_outorga_procuracao ? 'SIM' : 'NÃO'}
+                      </p>
                     </div>
                     {dados.permite_outorga_procuracao && (
                       <>
                         <div>
-                          <p className="text-xs text-neutral-500 uppercase font-semibold">Quem Assina Procuração</p>
+                          <p className="text-xs text-neutral-500 uppercase font-semibold">QUEM DEVE ASSINAR PROCURAÇÃO</p>
                           <p className="font-medium text-neutral-700">{dados.quem_assina_procuracao || '-'}</p>
                         </div>
                         <div>
