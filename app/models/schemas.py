@@ -13,7 +13,8 @@ class Administrador(BaseModel):
     nome: str = Field(description="Nome completo do administrador/diretor.")
     cpf: str = Field(description="CPF do administrador/diretor.")
     prazo_mandato: str = Field(description="Ex: 'Determinado (1 ano)' ou 'Indeterminado'.")
-    e_socio: bool = Field(description="true se for sócio, false se for administrador não-sócio.")
+    forma_assinatura: str = Field(description="Como ESTE administrador assina pela empresa (ex: 'Isoladamente', 'Em conjunto com diretor X').")
+    e_socio: bool = Field(description="true se for sócio, false se não for.")
 
 class DocumentoSocietario(BaseModel):
     tipo_documento: str
@@ -25,13 +26,12 @@ class DocumentoSocietario(BaseModel):
     quantidade_cotas_totais: float
     
     socios: List[Socio]
-    administradores: List[Administrador] = Field(description="Lista de TODOS os administradores e diretores nomeados no contrato (sócios ou não-sócios).")
+    administradores: List[Administrador] = Field(description="Lista de TODOS os administradores e diretores nomeados.")
     
-    forma_assinatura: str
-    regras_assinatura: Optional[str]
+    regras_assinatura_gerais: Optional[str] = Field(description="Regras gerais, como limites de valor para a empresa (ex: 'Cheques acima de 50 mil exigem duas assinaturas'). Deixe vazio se não houver.")
     
     permite_outorga_procuracao: bool = Field(description="true ou false. Indica se a empresa pode passar procuração.")
-    quem_assina_procuracao: Optional[str]
+    quem_assina_procuracao: Optional[str] = Field(description="NOME e CPF de quem assina procuração. Ex: 'João da Silva (CPF: 111.222.333-44)'.")
     forma_assinatura_procuracao: Optional[str]
     regras_outorga_procuracao: Optional[str]
     

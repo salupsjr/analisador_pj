@@ -104,7 +104,7 @@ export default function DashboardIDP() {
 
             {dados && (
               <>
-                {/* Alerta Matemático (Regra de Negócio) */}
+                {/* Alerta Matemático */}
                 {dados.ALERTA_VALIDACAO && (
                   <div className="bg-amber-100 border-l-4 border-amber-500 text-amber-800 p-4 rounded-lg shadow-sm flex items-start gap-3">
                     <AlertTriangle className="w-6 h-6 flex-shrink-0 mt-0.5" />
@@ -130,7 +130,7 @@ export default function DashboardIDP() {
                   </div>
                 </div>
 
-                {/* Card 2: Quadro Societário (Sócios) */}
+                {/* Card 2: Quadro Societário */}
                 <div className="bg-white rounded-xl shadow-sm border border-neutral-200 overflow-hidden">
                   <div className="bg-neutral-800 px-6 py-4 flex items-center gap-2 text-white">
                     <Users className="w-5 h-5" />
@@ -158,11 +158,11 @@ export default function DashboardIDP() {
                   </div>
                 </div>
 
-                {/* NOVO Card 3: Administradores e Diretores */}
+                {/* Card 3: Administradores e Diretores */}
                 <div className="bg-white rounded-xl shadow-sm border border-neutral-200 overflow-hidden">
                   <div className="bg-neutral-800 px-6 py-4 flex items-center gap-2 text-white">
                     <UserCheck className="w-5 h-5" />
-                    <h3 className="font-semibold text-lg">Administradores | Diretores</h3>
+                    <h3 className="font-semibold text-lg">Administradores e Diretores</h3>
                   </div>
                   <div className="p-0 overflow-x-auto">
                     <table className="w-full text-left border-collapse">
@@ -170,6 +170,7 @@ export default function DashboardIDP() {
                         <tr className="bg-neutral-50 border-b border-neutral-200 text-xs uppercase text-neutral-500">
                           <th className="px-6 py-3 font-semibold">Nome</th>
                           <th className="px-6 py-3 font-semibold">CPF</th>
+                          <th className="px-6 py-3 font-semibold text-blue-700">COMO ASSINA?</th>
                           <th className="px-6 py-3 font-semibold">Mandato</th>
                           <th className="px-6 py-3 font-semibold">É Sócio?</th>
                         </tr>
@@ -179,6 +180,7 @@ export default function DashboardIDP() {
                           <tr key={idx} className="hover:bg-neutral-50">
                             <td className="px-6 py-4 font-medium">{admin.nome}</td>
                             <td className="px-6 py-4 text-neutral-600">{admin.cpf}</td>
+                            <td className="px-6 py-4 font-medium text-blue-700">{admin.forma_assinatura}</td>
                             <td className="px-6 py-4 text-neutral-600">{admin.prazo_mandato}</td>
                             <td className="px-6 py-4">
                               <span translate="no" className={`px-2 py-1 rounded-full text-xs font-semibold ${admin.e_socio ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
@@ -190,6 +192,13 @@ export default function DashboardIDP() {
                       </tbody>
                     </table>
                   </div>
+                  {/* Regras Gerais da Empresa - Se houver */}
+                  {dados.regras_assinatura_gerais && (
+                    <div className="bg-blue-50 p-4 border-t border-blue-100">
+                      <p className="text-xs text-blue-600 uppercase font-bold mb-1">Regras Gerais / Limites (Empresa)</p>
+                      <p className="text-blue-900 font-medium">{dados.regras_assinatura_gerais}</p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Card 4: Governança e Procurações */}
@@ -199,10 +208,6 @@ export default function DashboardIDP() {
                     <h3 className="font-semibold text-lg">Governança e Procurações</h3>
                   </div>
                   <div className="p-6 space-y-4">
-                    <div className="bg-blue-50 p-4 rounded border border-blue-100">
-                      <p className="text-xs text-blue-600 uppercase font-bold mb-1">Forma de Assinatura (Empresa)</p>
-                      <p className="text-blue-900 font-medium">{dados.forma_assinatura}</p>
-                    </div>
                     <div>
                       <p className="text-xs text-neutral-500 uppercase font-semibold">Permite Procuração?</p>
                       <p translate="no" className="font-medium text-lg">
