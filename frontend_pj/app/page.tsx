@@ -1,13 +1,36 @@
 "use client";
 
 import { useState } from "react";
-import { UploadCloud, Building2, Users, FileSignature, AlertTriangle, Loader2, UserCheck } from "lucide-react";
+import { UploadCloud, Building2, Users, FileSignature, AlertTriangle, Loader2, UserCheck, FileText } from "lucide-react";
 
 export default function DashboardIDP() {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState("");
   const [dados, setDados] = useState<any>(null);
+  const [isDragging, setIsDragging] = useState(false);
+
+  // ==========================================
+  // FUNÇÕES DE ARRASTAR E SOLTAR (DRAG & DROP)
+  // ==========================================
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      setFile(e.dataTransfer.files[0]);
+      e.dataTransfer.clearData();
+    }
+  };
 
   const processarDocumento = async () => {
     if (!file) {
@@ -67,14 +90,32 @@ export default function DashboardIDP() {
               <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
                 <UploadCloud className="w-5 h-5 text-blue-600" /> Upload de Documento
               </h2>
-              <div className="border-2 border-dashed border-neutral-300 rounded-lg p-8 flex flex-col items-center justify-center bg-neutral-50 hover:bg-neutral-100 transition-colors">
+              
+              {/* ÁREA DE DRAG & DROP ATUALIZADA */}
+              <div 
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                className={`border-2 border-dashed rounded-lg p-8 flex flex-col items-center justify-center transition-colors ${
+                  isDragging ? "border-blue-500 bg-blue-50" : "border-neutral-300 bg-neutral-50 hover:bg-neutral-100"
+                }`}
+              >
                 <input
                   type="file"
                   accept=".pdf"
                   onChange={(e) => setFile(e.target.files?.[0] || null)}
                   className="w-full text-sm text-neutral-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
                 />
+                
+                {/* Mostra visualmente que o arquivo está lá, caso solte o arrastar */}
+                {file && (
+                  <div className="mt-4 flex items-center gap-2 text-sm text-green-600 font-medium">
+                    <FileText className="w-4 h-4" />
+                    <p className="truncate max-w-[200px]">{file.name}</p>
+                  </div>
+                )}
               </div>
+
               <button
                 onClick={processarDocumento}
                 disabled={loading || !file}
@@ -91,14 +132,17 @@ export default function DashboardIDP() {
               <div className="bg-white p-12 rounded-xl shadow-sm border border-neutral-200 flex flex-col items-center justify-center text-center text-neutral-400 h-full min-h-[400px]">
                 <FileSignature className="w-12 h-12 mb-4 opacity-50" />
                 <p>Nenhum documento processado.</p>
-                <p className="text-sm mt-1">Faça o upload de um Contrato Social para visualizar os dados.</p>
+                <p className="text-sm mt-1">Arraste ou faça o upload de um Contrato Social para visualizar os dados.</p>
               </div>
             )}
 
             {loading && (
               <div className="bg-white p-12 rounded-xl shadow-sm border border-neutral-200 flex flex-col items-center justify-center text-center text-neutral-400 h-full min-h-[400px]">
                 <Loader2 className="w-10 h-10 animate-spin text-blue-600 mb-4" />
-                <p className="text-neutral-600 font-medium animate-pulse">A IA está lendo o documento...</p>
+                {/* MENSAGEM DE CARREGAMENTO DINÂMICA */}
+                <p className="text-neutral-600 font-medium animate-pulse">
+                  Verificando o documento: <span className="font-bold text-blue-800">{file?.name}</span>...
+                </p>
               </div>
             )}
 
@@ -192,7 +236,6 @@ export default function DashboardIDP() {
                       </tbody>
                     </table>
                   </div>
-                  {/* Regras Gerais da Empresa - Se houver */}
                   {dados.regras_assinatura_gerais && (
                     <div className="bg-blue-50 p-4 border-t border-blue-100">
                       <p className="text-xs text-blue-600 uppercase font-bold mb-1">Regras Gerais / Limites (Empresa)</p>
